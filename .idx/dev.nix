@@ -31,43 +31,19 @@
             PORT = "$PORT";
          };
        };
-      }; 
+      };    
     };
     # Workspace lifecycle hooks
     workspace = {
       # Runs when a workspace is first created
       onCreate = {
-        create-venv = ''
-          python -m venv .venv
-          source .venv/bin/activate
-          pip install -r requirements.txt  
-        '';
-      };
-      # Runs when the workspace is (re)started
-      onStart = {
-        # Example: start a background task to watch and re-build backend code
-        create-venv = ''
-          if [ ! -d .venv ]; then 
-            python -m venv .venv
-            source $PWD/.venv/bin/activate
-            echo "source $PWD/.venv/bin/activate" >> ~/.bashrc
-            pip install -r requirements.txt
-          fi
-          source $PWD/.venv/bin/activate
-
-          if [ ! -d db.sqlite3 ]; then
-            python manage.py migrate
-            sleep 1
-          fi
-
-        '';
         install-oh-my-bash = ''
-          if [ ! -d ~/.oh-my-bash ]; then
-            git clone https://github.com/ohmybash/oh-my-bash.git ~/.oh-my-bash
-            cp ~/.oh-my-bash/templates/bashrc.osh-template ~/.bashrc
-          fi
+          make install-oh-my-bash
         '';
-        # watch-backend = "npm run watch-backend";
+        create-venv = ''
+          make install
+          make migrate 
+        '';
       };
     };
   };
